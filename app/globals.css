@@ -11,6 +11,14 @@ button, input { font: inherit; }
 .scene { width: 100%; height: 100%; touch-action: none; }
 .scene canvas { width: 100% !important; height: 100% !important; display: block; }
 .part-hover { position: absolute; z-index: 4; max-width: 240px; border-radius: 8px; background: #14233a; color: #fff; padding: 6px 9px; font-size: 12px; pointer-events: none; }
+.dashboard-grid > section { min-height: 760px; }
+.dashboard-grid > section > div:first-child > div:last-child { display: none; }
+.dashboard-grid > section > .relative { height: 680px !important; overflow: visible !important; }
+.dashboard-grid > section > .relative > div:last-child { display: none; }
+.dashboard-grid > section > .relative > div:first-child { width: 100%; transform: none !important; }
+.professional-atlas { height: 660px !important; display: flex; flex-direction: column; overflow: hidden !important; }
+.professional-atlas > .scene { height: 500px; min-height: 500px; flex: 0 0 500px; }
+.professional-atlas > .bottom-4 { position: relative; bottom: auto; left: auto; right: auto; margin: 8px 12px 12px; flex: 1 0 auto; }
 @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr !important; } .detail-panel { min-height: auto !important; } }
 @media (max-width: 720px) {
   .sidebar { display: none; }
@@ -18,10 +26,6 @@ button, input { font: inherit; }
   .main-pad { padding: 14px !important; }
   .dashboard-grid, .dashboard-grid > * { min-width: 0; }
   .dashboard-grid > section { min-height: 760px; padding: 14px; }
-  .dashboard-grid > section > div:first-child > div:last-child { display: none; }
-  .dashboard-grid > section > .relative { height: 660px !important; overflow: visible !important; }
-  .dashboard-grid > section > .relative > div:last-child { display: none; }
-  .dashboard-grid > section > .relative > div:first-child { width: 100%; transform: none !important; }
   .detail-panel { min-width: 0; padding: 18px; }
   .professional-atlas { height: 640px !important; display: flex; flex-direction: column; overflow: hidden !important; }
   .professional-atlas > .scene { height: 430px; min-height: 430px; flex: 0 0 430px; }
