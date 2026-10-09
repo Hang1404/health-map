@@ -20,7 +20,8 @@ export async function extractPdfText(file: File) {
     const content = await page.getTextContent();
     pages.push(content.items.map(item => "str" in item ? item.str : "").join(" "));
   }
-  await document.destroy();
+  const cleanup = (document as unknown as { destroy?: () => Promise<void> }).destroy;
+  if (typeof cleanup === "function") await cleanup.call(document);
   return pages.join("\n");
 }
 
