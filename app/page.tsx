@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import ProfessionalBody from "../components/ProfessionalBody";
 
 type Status = "normal" | "review" | "abnormal" | "none";
 type Region = "head" | "chest" | "abdomen" | "left-knee" | "right-knee";
@@ -18,20 +19,7 @@ const statusStyles: Record<Status, { bg: string; text: string; dot: string; labe
 };
 function Icon({ name }: { name: string }) { const icons: Record<string,string> = { home:"⌂", body:"♙", report:"▤", history:"◷", settings:"⚙", search:"⌕", upload:"↑", arrow:"›", close:"×", bell:"◌", rotate:"↻", zoom:"⊕" }; return <span className="inline-flex h-5 w-5 items-center justify-center text-lg leading-none">{icons[name] || "•"}</span>; }
 
-function Body({ selected, onSelect, back }: { selected: Region; onSelect: (r: Region) => void; back: boolean }) {
-  const fill = (region: Region) => statusStyles[findings.find(x => x.region === region)!.status].dot;
-  const common = (region: Region) => ({ onClick: () => onSelect(region), fill: fill(region), stroke: selected === region ? "#14233A" : "#fff", strokeWidth: selected === region ? 4 : 2, className: "region" });
-  return <svg className="anatomy h-[495px] max-w-full" viewBox="0 0 270 590" aria-label="Interactive human body"><defs><filter id="shadow"><feDropShadow dx="0" dy="9" stdDeviation="8" floodOpacity=".13" /></filter></defs><g filter="url(#shadow)">
-    <ellipse {...common("head")} cx="135" cy="70" rx="38" ry="48" />
-    <path {...common("chest")} d="M91 122 C78 135 72 165 75 214 L93 285 L177 285 L195 214 C198 165 192 135 179 122 C163 134 107 134 91 122Z" />
-    <path {...common("abdomen")} d="M93 285 L177 285 L169 371 L101 371Z" />
-    <path fill="#E4E9E7" stroke="#fff" strokeWidth="2" d={back ? "M91 130 L52 150 L25 260 L51 267 L83 196Z" : "M91 130 L57 147 L31 256 L56 263 L92 188Z"} />
-    <path fill="#E4E9E7" stroke="#fff" strokeWidth="2" d={back ? "M179 130 L218 150 L245 260 L219 267 L187 196Z" : "M179 130 L213 147 L239 256 L214 263 L178 188Z"} />
-    <path {...common("left-knee")} d="M101 371 L133 371 L126 468 L94 468Z" />
-    <path {...common("right-knee")} d="M137 371 L169 371 L176 468 L144 468Z" />
-    <path fill="#E4E9E7" stroke="#fff" strokeWidth="2" d="M94 468 L126 468 L124 560 L91 560Z" /><path fill="#E4E9E7" stroke="#fff" strokeWidth="2" d="M144 468 L176 468 L179 560 L146 560Z" />
-  </g></svg>;
-}
+function Body({ onSelect }: { selected: Region; onSelect: (r: Region) => void; back: boolean }) { return <ProfessionalBody onRegionSelect={region => onSelect(region as Region)} />; }
 
 export default function Home() {
   const [active, setActive] = useState("Overview"), [selected, setSelected] = useState<Region>("abdomen"), [back, setBack] = useState(false), [scale, setScale] = useState(1), [uploaded, setUploaded] = useState(false), [saved, setSaved] = useState(false);
