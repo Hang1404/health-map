@@ -12,4 +12,16 @@ button, input { font: inherit; }
 .scene canvas { width: 100% !important; height: 100% !important; display: block; }
 .part-hover { position: absolute; z-index: 4; max-width: 240px; border-radius: 8px; background: #14233a; color: #fff; padding: 6px 9px; font-size: 12px; pointer-events: none; }
 @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr !important; } .detail-panel { min-height: auto !important; } }
-@media (max-width: 720px) { .sidebar { display: none; } .hide-mobile { display: none; } .main-pad { padding: 18px !important; } }
+@media (max-width: 720px) {
+  .sidebar { display: none; }
+  .hide-mobile { display: none; }
+  .main-pad { padding: 14px !important; }
+  .dashboard-grid, .dashboard-grid > * { min-width: 0; }
+  .dashboard-grid > section { min-height: 690px; padding: 14px; }
+  .dashboard-grid > section > div:first-child > div:last-child { display: none; }
+  .dashboard-grid > section > .relative { height: 590px !important; overflow: visible !important; }
+  .dashboard-grid > section > .relative > div:last-child { display: none; }
+  .dashboard-grid > section > .relative > div:first-child { width: 100%; transform: none !important; }
+  .detail-panel { min-width: 0; padding: 18px; }
+  .scene { min-height: 530px; }
+}
