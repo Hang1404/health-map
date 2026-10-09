@@ -3,16 +3,21 @@ import { useEffect, useMemo, useState } from "react";
 import AnatomyScene from "./anatomy/scene";
 import { defaultVisible, SYSTEMS, type Atlas, type SystemId } from "./anatomy/anatomy";
 
-type Props = { onRegionSelect: (region: string) => void };
+type Props = { onRegionSelect: (region: string) => void; selectedRegion: string };
 const regionFor = (name: string) => {
   const n = name.toLowerCase();
   if (/brain|eye|ear|head|tongue|jaw/.test(n)) return "head";
-  if (/heart|lung|rib|chest|trachea/.test(n)) return "chest";
-  if (/liver|stomach|pancreas|spleen|kidney|intestin|colon|bladder/.test(n)) return "abdomen";
+  if (/heart|cardiac/.test(n)) return "heart";
+  if (/lung|trachea|bronch/.test(n)) return "lungs";
+  if (/liver|hepatic|gallbladder/.test(n)) return "liver";
+  if (/kidney|renal|ureter|bladder/.test(n)) return "kidneys";
+  if (/vertebra|spine|spinal/.test(n)) return "spine";
+  if (/knee|patella/.test(n)) return "left-knee";
+  if (/stomach|pancreas|spleen|intestin|colon/.test(n)) return "abdomen";
   return "abdomen";
 };
 
-export default function ProfessionalBody({ onRegionSelect }: Props) {
+export default function ProfessionalBody({ onRegionSelect, selectedRegion }: Props) {
   const [atlas, setAtlas] = useState<Atlas | null>(null);
   const [visible, setVisible] = useState<SystemId[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
@@ -37,6 +42,7 @@ export default function ProfessionalBody({ onRegionSelect }: Props) {
     <div className="absolute bottom-4 left-4 right-4 z-10 rounded-xl border border-white/70 bg-white/90 p-3 shadow-sm backdrop-blur">
       <div className="flex items-center justify-between text-xs font-semibold"><span>解剖层级</span><button onClick={() => setReset(reset + 1)} className="text-slate-500">重置视角</button></div>
       <div className="mt-2 flex gap-2 overflow-x-auto pb-1">{SYSTEMS.filter(s => ["skeletal","muscular","cardiac","respiratory","digestive","arterial","nervous"].includes(s.id)).map(s => <button key={s.id} onClick={() => toggle(s.id)} className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs ${visible.includes(s.id) ? "text-white" : "bg-slate-100 text-slate-500"}`} style={visible.includes(s.id) ? { background: s.color } : undefined}>{({skeletal:"骨骼",muscular:"肌肉",cardiac:"心脏",respiratory:"呼吸",digestive:"消化",arterial:"血管",nervous:"神经"} as Record<string,string>)[s.id]}</button>)}</div>
+      <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1" aria-label="检查结果关联区域">{[{id:"heart",label:"心脏",tone:"#6FAE8A"},{id:"lungs",label:"肺部",tone:"#6FAE8A"},{id:"liver",label:"肝脏",tone:"#F0A039"},{id:"kidneys",label:"肾脏",tone:"#6FAE8A"},{id:"spine",label:"脊柱",tone:"#E9644B"},{id:"left-knee",label:"膝关节",tone:"#C7CCCE"}].map(r => <button key={r.id} onClick={() => onRegionSelect(r.id)} className={`whitespace-nowrap rounded-full border px-2 py-1 text-xs font-semibold ${selectedRegion === r.id ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-slate-600"}`}><i className="mr-1 inline-block h-1.5 w-1.5 rounded-full" style={{background:r.tone}}/>{r.label}</button>)}</div>
       <div className="mt-2 flex items-center gap-2"><span className="whitespace-nowrap text-xs text-slate-500">展开</span><input aria-label="展开解剖结构" className="w-full accent-coral" type="range" min="0" max="100" value={explode * 100} onChange={e => setExplode(Number(e.target.value) / 100)}/></div>
     </div>
   </div>;
