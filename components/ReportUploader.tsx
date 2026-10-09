@@ -1,5 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
+import { extractPdfText, parseVerifiedValues } from "../lib/report-parser";
 
 type Props = { onBack: () => void };
 type Row = { name: string; value: string; unit: string; range: string; region: string; status: "正常" | "需关注" | "异常" };
@@ -14,8 +15,8 @@ export default function ReportUploader({ onBack }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [date, setDate] = useState("2026-09-12");
   const [rows, setRows] = useState<Row[]>(initial);
-  const [saved, setSaved] = useState(false);
-  const choose = (next: File | null) => { if (!next) return; if (!/(pdf|jpeg|jpg|png)$/i.test(next.name)) return alert("请选择 PDF、JPG 或 PNG 文件。"); if (next.size > 20 * 1024 * 1024) return alert("文件不能超过 20 MB。"); setFile(next); setSaved(false); };
+  const [saved, setSaved] = useState(false), [extracting, setExtracting] = useState(false), [message, setMessage] = useState("");
+  const choose = async (next: File | null) => { if (!next) return; if (!/(pdf|jpeg|jpg|png)$/i.test(next.name)) return alert("请选择 PDF、JPG 或 PNG 文件。"); if (next.size > 20 * 1024 * 1024) return alert("文件不能超过 20 MB。"); setFile(next); setSaved(false); setMessage(""); if (!/\.pdf$/i.test(next.name)) { const note = "图片和扫描版 PDF 需要 OCR；请先手动审核填写，系统不会猜测结果。"; setMessage(note); alert(note); return; } try { setExtracting(true); const rowsFromPdf = parseVerifiedValues(await extractPdfText(next)); if (rowsFromPdf.length) { setRows(rowsFromPdf); const note = `已提取 ${rowsFromPdf.length} 项含有效参考范围的数值；请逐项核验后保存。`; setMessage(note); alert(note); } else { const note = "未在此 PDF 中找到可安全判定的“数值 + 参考范围”。请手动填写，或使用带文字层的 PDF。"; setMessage(note); alert(note); } } catch { const note = "无法读取该 PDF 的文字层。它可能是扫描件、加密文件或格式不支持；请手动填写，不会自动判断异常。"; setMessage(note); alert(note); } finally { setExtracting(false); } };
   const update = (i: number, key: keyof Row, value: string) => { setRows(rows.map((row, index) => index === i ? ({ ...row, [key]: value } as Row) : row)); setSaved(false); };
   const add = () => { setRows([...rows, { name: "", value: "", unit: "", range: "", region: "未关联", status: "正常" }]); setSaved(false); };
   const save = () => { const regionMap: Record<string,string> = { "心脏":"heart", "肺部":"lungs", "肝脏":"liver", "肾脏":"kidneys", "脊柱":"spine", "膝关节":"left-knee", "头颈部":"head", "腹部":"abdomen" }; const statusMap: Record<string,string> = { "正常":"normal", "需关注":"review", "异常":"abnormal" }; const records = rows.filter(r => r.name && r.value).map(r => ({ region: regionMap[r.region] || "abdomen", label: r.region, name: r.name, result: r.value, unit: r.unit, range: r.range || "未提供", status: statusMap[r.status], note: "用户已在上传审核页确认此结果。", source: `来源文件：${file?.name || "未命名报告"}`, date })); localStorage.setItem("bodymap-reviewed-results", JSON.stringify(records)); window.dispatchEvent(new Event("bodymap-results-saved")); setSaved(true); };
