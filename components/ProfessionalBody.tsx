@@ -26,7 +26,7 @@ export default function ProfessionalBody({ onRegionSelect }: Props) {
   const state = useMemo(() => ({ explode, visible, selected, isolate: false, view, rotate, reset, inspectorOpen: false }), [explode, visible, selected, view, rotate, reset]);
   const select = (id: string) => { if (!atlas) return; const part = atlas.parts.find(p => p.id === id); if (part) onRegionSelect(regionFor(part.name)); setSelected([id]); };
   const toggle = (id: SystemId) => setVisible(v => v.includes(id) ? v.filter(x => x !== id) : [...v, id]);
-  return <div className="relative h-[530px] overflow-hidden rounded-2xl bg-[#edf0ef]">
+  return <div className="professional-atlas relative h-[530px] overflow-hidden rounded-2xl bg-[#edf0ef]">
     {!atlas && !error && <div className="absolute inset-0 z-10 grid place-items-center bg-[#edf0ef]"><div className="text-center"><div className="mx-auto h-9 w-9 animate-spin rounded-full border-2 border-slate-300 border-t-coral"/><p className="mt-4 text-sm text-slate-500">正在加载专业解剖图谱 {progress ? `${progress}%` : ""}</p><p className="mt-1 text-xs text-slate-400">首次加载约 30 MB</p></div></div>}
     {error && <div className="absolute inset-0 grid place-items-center p-8 text-center text-sm text-slate-500">{error}</div>}
     {atlas && <AnatomyScene atlas={atlas} state={state} onSelect={select} onProgress={setProgress} onError={setError}/>} 
